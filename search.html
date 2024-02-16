@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+<label>Type:</label>
+<label for="type"></label><input id="type" />
+<button onclick="search()">Search</button>
+<br />
+
+<table>
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Type</th>
+        </tr>
+    </thead>
+    <tbody id="searchResult">
+        <script>
+            let ducks = [];
+
+            async function getAll() {
+                let host = "http://localhost:8080";
+                try {
+                    const response = await fetch(host);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return await response.json();
+                } catch (error) {
+                    console.error("Failed to fetch ducks:", error);
+                    return [];
+                }
+            }
+            async function search(){
+                if(ducks.length === 0) {
+                    ducks= await getAll();
+                }
+
+                let duckType = document.getElementById("type");
+                let table = document.getElementById("searchResult");
+                table.innerHTML = "";
+                for (let duck of ducks){
+                    if (!duckType || duck.type === duckType){
+                        let row = document.createElement("tr");
+                        let cell1 = document.createElement("td");
+                        let cell2 = document.createElement("td")
+                        let id = document.createTextNode(duck.id);
+                        let type = document.createTextNode(duck.type);
+                        cell1.appendChild(id);
+                        cell2.appendChild(type);
+                        row.appendChild(cell1);
+                        row.appendChild(cell2);
+                        table.appendChild(row);
+                    }
+                }
+            }
+        </script>
+    </tbody>
+</table>
+
+</body>
+</html>
